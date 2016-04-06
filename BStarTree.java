@@ -64,7 +64,13 @@ public class BStarTree
 		}
 		else
 		{
-
+			boolean inserted = false;
+			BStarTreeNode nodePointer = root;
+			
+			while(!inserted)
+			{
+				
+			}
 		}
 
 		return false;
@@ -77,8 +83,7 @@ public class BStarTree
 		your B*-Tree.  The method should return true after a 
 		successful delete, and false otherwise.
 		*/
-				
-		return false;
+		return deleteElement(new Integer(element));
 	}
 	
 	public boolean deleteElement(Integer element)
@@ -99,7 +104,7 @@ public class BStarTree
 		for the element sent in as a parameter.  Refer to the
 		specification for more details.
 		*/
-		return null;
+		return search(new Integer(element));
 	}
 	
 	public String search(Integer element)
@@ -109,7 +114,21 @@ public class BStarTree
 		for the element sent in as a parameter.  Refer to the
 		specification for more details.
 		*/
-		return null;
+		String searchString = "";
+		BStarTreeNode nodePointer = root;
+		boolean found = false;
+
+		while (nodePointer != null && !found)
+		{
+			
+		}
+
+		if (!found)
+		{
+			searchString += ",*NULL*";
+		}
+
+		return searchString;
 	}
 	
 	public int height()
@@ -117,11 +136,30 @@ public class BStarTree
 		/*
 		This method should return the height of the tree.
 		*/
-		if (root == null) return 0;
-
-
-		return 0;
+		return height(root);
 	}
+
+	public int height(BStarTreeNode node)
+	{
+		if (node == null) return 0;
+
+		if (node.children == null) return 1;
+
+		int [] heights = new int[node.children.length];
+
+		for (int x = 0; x < node.children.length; x++)
+		{
+			heights[x] = height(node.children[x]);
+		}
+		int maxHeight = -1;
+		for (int x = 0; x < node.children.length; x++)
+		{
+			if (heights[x] > maxHeight)
+				maxHeight = heights[x];
+		}
+		return 1 + maxHeight;
+	}
+
 	
 	public int fullness()
 	{
@@ -132,9 +170,8 @@ public class BStarTree
 		A tree containing no keys is 0% full.
 		*/
 		if (root == null) return 0;
-		
 
-		return 0;
+		return (int)((double)(countSpacesFilled())/countSpacesInTree() * 100);		
 	}
 	
 	public String breadthFirst()
@@ -149,17 +186,32 @@ public class BStarTree
 		//System.out.println("Spaces occupied: " + countSpacesFilled());
 
 		//System.out.println( root.keys.split(Pattern.quote("[]"),-1)[0] );
-		System.out.println( convertNodeToIntegers(root) );
+		System.out.println( convertNodeToIntegers(root)[0] );
 
-
-		String treeString = "";
-
-		if (root != null)
-		{
-			treeString += root.keys;
-		}
+		treeString = getTreeString();
 
 		return treeString;
+	}
+
+	public String getTreeString()
+	{
+		return getTreeString(root);
+	}
+
+	public String getTreeString(BStarTreeNode node)
+	{
+		if (node == null) return "";
+
+		String nodeString = "";
+
+		for (int x = 0; x < convertNodeToIntegers(node).length; x++)
+		{
+			nodeString += getTreeString(node.children[x]);
+			nodeString += convertNodeToIntegers(node)[x];
+		}
+		nodeString += getTreeString();
+		return nodeString;
+
 	}
 
 	public int spacesLeftInNode(BStarTreeNode node)
@@ -197,7 +249,6 @@ public class BStarTree
 		return currentNodeSpaces + childNodeSpaces;
 	}
 
-
 	public int countSpacesFilled()
 	{
 		return countSpacesFilled(root);
@@ -232,27 +283,19 @@ public class BStarTree
 
 		Integer [] valueArray;
 
-		for (int x = 0; x < numbers.length; x++)
-		{
-			System.out.println(numbers[x]);
-		}
 
 		valueArray = new Integer[numbers.length];
-		System.out.println(numbers[1] == " ");
 
 		for (int i = 0; i < numbers.length; i++)
 		{
 			if (numbers[i] != "[]")
 			{
-				
 				numbers[i] = numbers[i].replace("[","");
-				System.out.println("One");
 
 				numbers[i] = numbers[i].replace("]","");
-				System.out.println("Two");
-
+				if (numbers[i].matches("\\d"))
 					valueArray[i] = Integer.parseInt(numbers[i]);
-					System.out.println(valueArray[i]);
+				else valueArray[i] = null;
 			}	
 
 		}

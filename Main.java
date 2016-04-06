@@ -12,6 +12,6 @@ public class Main
 		BStarTree myTree = new BStarTree(5);
 		myTree.insertElement(4);
 		System.out.println(myTree.breadthFirst());
-		
+		System.out.println(myTree.height());
 	}
 }
