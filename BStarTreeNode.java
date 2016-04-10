@@ -1,8 +1,13 @@
+/*
+Name and Surname: Regan Koopmans
+Student/staff Number: 15043143
+*/
+
 public class BStarTreeNode
 {
 	public String keys;
 	public BStarTreeNode [] children;
-	
+	public int maxNode;
 
 	public BStarTreeNode(int m)
 	{
@@ -22,5 +27,11 @@ public class BStarTreeNode
 			keys += "[]";
 		}
 		children = null;
+	}
+	
+	public void initializeChildren()
+	{
+		if (children == null) 
+			children = new BStarTreeNode[maxNode];
 	}
 }

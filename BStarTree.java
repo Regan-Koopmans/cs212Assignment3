@@ -1,141 +1,266 @@
-import java.util.regex.Pattern;
-
 /*
 Name and Surname: Regan Koopmans
 Student/staff Number: 15043143
 */
 
-/*You must complete this class to create a fully functional B*-Tree containing
-Integer objects.  Additional instructions are provided in comments throughout the class*/
+import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
 public class BStarTree
 {
-	/*
-	1. You may the signatures of any of the given methods.  You may however
-	add any additional methods and/or field which you may require to aid you 
-	in the completion of this assignment.
-	
-	2. You will have to design and implement a your own Node class.  The BStarTree 
-	should house Integer objects.
-	
-	3. You will notice that there are some overloaded methods, some of which work 
-	for Integer objects and some with primitive type int.  You have to find a way 
-	to implement the methods to work with both types.
-	*/
-
 	BStarTreeNode root;
 	int maxNodeSize;
 	int rootSize;
-	
+
 	public BStarTree(int m)
 	{
-		/*
-		The constructor.  You must create a BStarTree object of order m,
-		where m is passed as a parameter to the constructor.
-		*/
 		root = null;
 		maxNodeSize = m;
+		rootSize = (int)(2*(Math.floor((double)(2*m-1)/3))+1);
+	}
+
+	public boolean insertIntoNode(BStarTreeNode node,Integer element)
+	{
+		Integer [] elementList = convertNodeToIntegers(node);
+		int numElements;
+		Integer [] minimalList;
+		
+		if (node == root)
+		{
+			minimalList = new Integer[elementList.length +1];
+			numElements = rootSize;
+		}
+		else
+		{
+			minimalList = new Integer[elementList.length+1];
+			numElements = maxNodeSize;
+		}
+
+		for (int i = 0; i < elementList.length;i++)
+		{
+			minimalList[i] = elementList[i];
+		}
+
+		minimalList[minimalList.length -1] = element;
+
+		Arrays.sort(minimalList);
+
+		node.keys = "";
+		for (int x = 0; x < numElements; x++)
+		{
+			if (x < minimalList.length)
+			{
+				node.keys += "[" + minimalList[x] + "]";
+			}
+			else
+			{
+				node.keys += "[]";
+			}
+		}
+		return true;
 	}
 	
+	public BStarTreeNode findParent(BStarTreeNode node)
+	{
+		if (root == null || node == root) return null;
+		
+		boolean isChild = false;
+		BStarTreeNode nodePointer = root;
+		
+		for (int x = 0; x < node.children.length; x++)
+			if (node.children[x] == node)
+				isChild = true;
+				
+		while (!isChild)
+		{
+			isChild = true; 
+		}
+		
+		return nodePointer;
+	}
+	
+	public boolean deleteFromNode(BStarTreeNode node, int element)
+	{
+		return (deleteFromNode(node,new Integer(element)));
+	}
+	
+	public boolean deleteFromNode(BStarTreeNode node,Integer element)
+	{
+		Integer [] elementList = convertNodeToIntegers(node);
+		int numElements;
+		Integer [] minimalList;
+
+		if (node == root)
+		{
+			minimalList = new Integer[rootSize-spacesLeftInNode(node)-1];
+			numElements = rootSize;
+		}
+		else
+		{
+			minimalList = new Integer[maxNodeSize-spacesLeftInNode(node)-1];
+			numElements = maxNodeSize;
+		}
+
+		for (int i = 0; i < minimalList.length;i++)
+		{
+			minimalList[i] = elementList[i];
+		}
+
+		Arrays.sort(minimalList);
+
+		node.keys = "";
+		for (int x = 0; x < numElements; x++)
+		{
+			if (x < minimalList.length)
+			{
+				node.keys += "[" + minimalList[x] + "]";
+			}
+			else
+			{
+				node.keys += "[]";
+			}
+		}
+		return true;
+	}
+
 	public boolean insertElement(int element)
 	{
-		/*
-		The int element passed as a parameter should be inserted in
-		your B*-Tree.  The method should return true after a 
-		successful insert, and false otherwise.
-		*/
-				
 		return insertElement(new Integer(element));
 	}
 	
+	public void splitChild(int i, BStarTreeNode node)
+	{
+//		BStarTreeNode temp = new BStarTreeNode;
+	}
+	
+	public BStarTreeNode findToInsert(Integer element)
+	{
+		return findToInsert(element,root);
+	}
+	
+	public BStarTreeNode findToInsert(Integer element, BStarTreeNode node)
+	{
+		if (node != null)
+		{
+			int i = 1;
+			for ( ; i <= convertNodeToIntegers(node).length && convertNodeToIntegers(node)[i-1].compareTo(element) < 0; i++);
+			if ((i > convertNodeToIntegers(node).length || convertNodeToIntegers(node)[i-1].compareTo(element) > 0) && node.children != null)
+				return findToInsert(element,node.children[i-1]);
+			else return node;
+		}
+		else return null;
+	}
+
 	public boolean insertElement(Integer element)
 	{
-		/*
-		The Integer object passed as a parameter should be inserted in
-		your B*-Tree.  The method should return true after a 
-		successful insert, and false otherwise.
-		*/
-		if (element == null) return false;
-		
 		if (root == null)
 		{
-			rootSize = (int)(2*(Math.floor((2*maxNodeSize - 1 )/3)) + 1);
 			root = new BStarTreeNode(element,rootSize);
 			return true;
 		}
 		else
 		{
-			boolean inserted = false;
 			BStarTreeNode nodePointer = root;
 			
-			while(!inserted)
+			if (spacesLeftInNode(nodePointer) > 0)
 			{
-				
+				//System.out.println("\n " + (findToInsert(element) == root) + "\n");
+				return insertIntoNode(findToInsert(element),element);
 			}
+			else
+			{
+				BStarTreeNode nodeToInsertInto = findToInsert(element);
+				
+			}	
 		}
-
-		return false;
+		return true;
 	}
 	
+
 	public boolean deleteElement(int element)
 	{
-		/*
-		The int element passed as a parameter should be deleted from
-		your B*-Tree.  The method should return true after a 
-		successful delete, and false otherwise.
-		*/
 		return deleteElement(new Integer(element));
 	}
-	
+
 	public boolean deleteElement(Integer element)
 	{
-		/*
-		The Integer object passed as a parameter should be deleted from
-		your B*-Tree.  The method should return true after a 
-		successful delete, and false otherwise.
-		*/
-				
+		BStarTreeNode node = BStarSearch(element);
+		
+		if (node != null)
+		{
+			// if (node.children != null)
+			// {
+			//
+			// }
+			// else
+			//
+			// while (true)
+			// {
+			// 	if (node)
+			// 	{
+			// 		return;
+			// 	}
+			// 	else if ()
+			// 	{
+			//
+			// 	}
+			// 	else if ()
+			// 	{
+			//
+			// 	}
+			// 	else ()
+			// 	{
+			//
+			// 	}
+			// }
+		}
 		return false;
 	}
-	
+
+	public BStarTreeNode BStarSearch(Integer key)
+	{
+		return BStarSearch(key,root);
+	}
+
+	public BStarTreeNode BStarSearch(Integer key, BStarTreeNode node)
+	{
+		if (node != null)
+		{
+			int i = 1;
+			for ( ; i <= convertNodeToIntegers(node).length && convertNodeToIntegers(node)[i-1].compareTo(key) < 0; i++);
+			if (i > convertNodeToIntegers(node).length || convertNodeToIntegers(node)[i-1].compareTo(key) > 0)
+				return BStarSearch(key,node.children[i-1]);
+			else return node;
+		}
+		else return null;
+	}
+
 	public String search(int element)
 	{
-		/*
-		A String should be returned representing the search path
-		for the element sent in as a parameter.  Refer to the
-		specification for more details.
-		*/
 		return search(new Integer(element));
 	}
-	
+
 	public String search(Integer element)
 	{
-		/*
-		A String should be returned representing the search path
-		for the element sent in as a parameter.  Refer to the
-		specification for more details.
-		*/
-		String searchString = "";
-		BStarTreeNode nodePointer = root;
-		boolean found = false;
-
-		while (nodePointer != null && !found)
-		{
-			
-		}
-
-		if (!found)
-		{
-			searchString += ",*NULL*";
-		}
-
-		return searchString;
+		return search(element,root);
 	}
-	
+
+	public String search(Integer element, BStarTreeNode node)
+	{
+		if (node != null)
+		{
+			int i = 1;
+			for ( ; i <= convertNodeToIntegers(node).length && element.compareTo(convertNodeToIntegers(node)[i-1]) > 0; i++);
+			if (i > convertNodeToIntegers(node).length || convertNodeToIntegers(node)[i-1].compareTo(element) > 0)
+				return node.keys + "," + search(element,node.children[i-1]);
+			else return node.keys;
+		}
+		else return "*NULL*";
+	}
+
 	public int height()
 	{
-		/*
-		This method should return the height of the tree.
-		*/
 		return height(root);
 	}
 
@@ -160,36 +285,39 @@ public class BStarTree
 		return 1 + maxHeight;
 	}
 
-	
 	public int fullness()
 	{
-		/*
-		This method should return as a percentage the fullness of the tree.
-		The percentage is out of 100 and if, for example, 70 is returned,
-		it means that the tree is 70% full.
-		A tree containing no keys is 0% full.
-		*/
 		if (root == null) return 0;
 
-		return (int)((double)(countSpacesFilled())/countSpacesInTree() * 100);		
+		return (int)((double)(countSpacesFilled())/countSpacesInTree() * 100);
 	}
-	
+
 	public String breadthFirst()
 	{
-		/*
-		This method returns a String containing the nodes in breath-first
-		order.  You should not include null nodes in the string.  The string
-		for an empty tree is simply "".
-		*/
-		//System.out.println("Space left in root: " + spacesLeftInNode(root.keys));
-		//System.out.println("Total spaces in the tree: " + countSpacesInTree());
-		//System.out.println("Spaces occupied: " + countSpacesFilled());
+		String treeString = "";
 
-		//System.out.println( root.keys.split(Pattern.quote("[]"),-1)[0] );
-		System.out.println( convertNodeToIntegers(root)[0] );
+		Queue queue = new Queue();
 
-		treeString = getTreeString();
+		Node nodePointer = new Node(root);
 
+		if (nodePointer != null)
+		{
+			queue.enqueue(nodePointer);
+			while (!queue.isEmpty())
+			{
+				nodePointer = queue.dequeue();
+				System.out.println(nodePointer.elem.keys);
+				treeString += nodePointer.elem.keys;
+				if (nodePointer.elem.children != null)
+				{
+					for (int x = 0; x < nodePointer.elem.children.length; x++)
+					{
+						if (nodePointer.elem.children[x] != null)
+							queue.enqueue(nodePointer.elem.children[x]);
+					}
+				}
+			}
+		}
 		return treeString;
 	}
 
@@ -211,7 +339,11 @@ public class BStarTree
 		}
 		nodeString += getTreeString();
 		return nodeString;
+	}
 
+	public void splitNode(BStarTreeNode node)
+	{
+		return;
 	}
 
 	public int spacesLeftInNode(BStarTreeNode node)
@@ -244,7 +376,6 @@ public class BStarTree
 				if (node.children[i] != null)
 					childNodeSpaces += (int)(node.children[i].keys.split(Pattern.quote("["),-1).length -1)/2;
 			}
-
 		}
 		return currentNodeSpaces + childNodeSpaces;
 	}
@@ -263,7 +394,7 @@ public class BStarTree
 		if (node == root)
 			spacesFilled = rootSize - spacesLeftInNode(node);
 		else spacesFilled = maxNodeSize - spacesLeftInNode(node);
-	
+
 		if (node.children != null)
 		{
 			for (int i = 0; i < maxNodeSize; i++)
@@ -272,36 +403,44 @@ public class BStarTree
 					childrenSpacesFilled += maxNodeSize - spacesLeftInNode(node.children[i]);
 			}
 		}
-
 		return spacesFilled + childrenSpacesFilled;
-
 	}
 
 	public Integer[] convertNodeToIntegers(BStarTreeNode node)
 	{
-		String [] numbers = node.keys.split(Pattern.quote("[]"),-1);
-
-		Integer [] valueArray;
-
-
-		valueArray = new Integer[numbers.length];
-
-		for (int i = 0; i < numbers.length; i++)
+		int i = 0;
+		String splitNum = node.keys;
+		
+		splitNum = splitNum.replace("[","");
+		splitNum = splitNum.replace("]"," ");
+		StringTokenizer st = new StringTokenizer(splitNum);
+		String [] numbers = new String[st.countTokens()];
+		while (st.hasMoreElements())
 		{
-			if (numbers[i] != "[]")
-			{
-				numbers[i] = numbers[i].replace("[","");
+			numbers[i] = st.nextToken();
+			i++;
+		}
+		
+		Integer [] valueArray = null;
 
-				numbers[i] = numbers[i].replace("]","");
-				if (numbers[i].matches("\\d"))
-					valueArray[i] = Integer.parseInt(numbers[i]);
-				else valueArray[i] = null;
-			}	
-
+		int notNullCounter = 0;
+		
+		for (int x = 0; x < numbers.length; x++)
+			if (numbers[x] != " ")
+				notNullCounter++;
+		
+		
+		valueArray = new Integer[notNullCounter];
+		
+		for (int x = 0; x < valueArray.length; x++)
+		{
+			if (numbers[x].matches("\\d"))
+				valueArray[x] = new Integer(Integer.parseInt(numbers[x]));
+			else valueArray[x] = null;		
 		}
 
+		
+		
 		return valueArray;
 	}
-
-
 }
