@@ -26,7 +26,7 @@ public class BStarTreeNode
 		{
 			keys += "[]";
 		}
-		children = null;
+		initializeChildren();
 	}
 	
 	public void initializeChildren()
