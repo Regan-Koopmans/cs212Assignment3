@@ -6,7 +6,7 @@ Student/staff Number: 15043143
 public class BStarTreeNode
 {
 	public String keys;
-	public BStarTreeNode [] children;
+	public BStarTreeNode [] children = null;
 	public int maxNode;
 
 	public BStarTreeNode(int m)
@@ -16,11 +16,13 @@ public class BStarTreeNode
 		{
 			keys += "[]";
 		}
-		children = null;
+		maxNode = m;
+		initializeChildren();
 	}
 
 	public BStarTreeNode(Integer element, int m)
 	{
+		maxNode = m;
 		keys = "[" + element.toString() + "]";
 		for (int x = 1; x < m; x++)
 		{
@@ -33,5 +35,8 @@ public class BStarTreeNode
 	{
 		if (children == null) 
 			children = new BStarTreeNode[maxNode];
+		
+		for (int x = 0; x < maxNode; x++)
+			children[x] = null;
 	}
 }

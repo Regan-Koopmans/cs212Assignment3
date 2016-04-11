@@ -69,14 +69,13 @@ public class BStarTree
 		BStarTreeNode nodePointer = root;
 		
 		for (int x = 0; x < node.children.length; x++)
-			if (node.children[x] == node)
+			if (nodePointer.children[x] == node)
 				isChild = true;
 				
 		while (!isChild)
 		{
 			isChild = true; 
 		}
-		
 		return nodePointer;
 	}
 	
@@ -136,7 +135,16 @@ public class BStarTree
 	
 	public BStarTreeNode findToInsert(Integer element)
 	{
-		return findToInsert(element,root);
+		int rootReferences = 0;
+		
+		if (root.children != null)
+			for (int x = 0; x < root.children.length; x++)
+				if (root.children[x] != null)
+					rootReferences++;
+		
+		if (spacesLeftInNode(root) > 0 && rootReferences == 0)
+			return root;
+		else return findToInsert(element,root);
 	}
 	
 	public BStarTreeNode findToInsert(Integer element, BStarTreeNode node)
@@ -157,6 +165,7 @@ public class BStarTree
 		if (root == null)
 		{
 			root = new BStarTreeNode(element,rootSize);
+			root.initializeChildren();
 			return true;
 		}
 		else
@@ -165,8 +174,11 @@ public class BStarTree
 			BStarTreeNode nodeToInsertInto = findToInsert(element);
 			if (spacesLeftInNode(nodeToInsertInto) == 0)
 			{
-				findParent(nodeToInsertInto);
-				nodeToInsertInto = new BStarTreeNode(element,maxNodeSize);
+				System.out.println(findToInsert(element) == root);
+				
+				if (findToInsert(element) == root)
+				splitRootInsert(element);
+				
 			}
 			else return insertIntoNode(findToInsert(element),element); 
 				
@@ -250,7 +262,9 @@ public class BStarTree
 			int i = 1;
 			for ( ; i <= convertNodeToIntegers(node).length && element.compareTo(convertNodeToIntegers(node)[i-1]) > 0; i++);
 			if (i > convertNodeToIntegers(node).length || convertNodeToIntegers(node)[i-1].compareTo(element) > 0)
-				return node.keys + "," + search(element,node.children[i-1]);
+				if (node.children != null && node.children.length > 0)
+					return node.keys + "," + search(element,node.children[i-1]);
+				else return node.keys + ",*NULL*";
 			else return node.keys;
 		}
 		else return "*NULL*";
@@ -338,8 +352,28 @@ public class BStarTree
 		return nodeString;
 	}
 
-	public void splitNode(BStarTreeNode node)
+	public void splitRootInsert(Integer element)
 	{
+		Integer [] rootArray = new Integer[convertNodeToIntegers(root).length+1];
+		Integer [] currentElements = convertNodeToIntegers(root);
+		
+		for (int x = 0; x < currentElements.length; x++)
+		{
+			rootArray[x] = currentElements[x];
+		}
+		rootArray[rootArray.length -1] = element;
+		Arrays.sort(rootArray);
+		
+		for (int x = 0; x < rootArray.length; x++)
+			System.out.println("\t" + rootArray[x]);
+		
+		
+	}
+	
+	public void splitNodeInsert(BStarTreeNode node, Integer element)
+	{
+		System.out.println(node.children.length % maxNodeSize);
+		
 		return;
 	}
 
@@ -366,7 +400,7 @@ public class BStarTree
 	{
 		int currentNodeSpaces = node.keys.split(Pattern.quote("["),-1).length -1;
 		int childNodeSpaces = 0;
-		if (node.children != null)
+		if (node.children != null && node.children.length > 0)
 		{
 			for (int i = 0; i < maxNodeSize; i++ )
 			{
@@ -435,9 +469,6 @@ public class BStarTree
 				valueArray[x] = new Integer(Integer.parseInt(numbers[x]));
 			else valueArray[x] = null;		
 		}
-
-		
-		
 		return valueArray;
 	}
 }
