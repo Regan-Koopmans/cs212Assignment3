@@ -199,7 +199,10 @@ public class BStarTree
 					System.out.println("Not dealing with root");
 					
 					if (siblingsHaveSpace(nodeToInsertInto))
+					{
+						System.out.println("Siblings have space");
 						return reorderElementInsert(element,nodeToInsertInto);
+					}
 					else return splitNodeInsert(nodeToInsertInto,element);
 				}
 				
@@ -211,6 +214,14 @@ public class BStarTree
 	
 	public boolean reorderElementInsert(Integer element, BStarTreeNode node)
 	{
+		BStarTreeNode parent = findParent(node);
+		int x = 0;
+		for (; x < parent.children.length && parent.children[x] != node;x++);
+		if (spacesLeftInNode(parent.children[x-1]) > 0)
+		{
+			node.deleteInNode(node,convertNodeToIntegers(node)[0]);
+			insertIntoNode(node,element);
+		}
 		return true;
 	}
 	
@@ -220,6 +231,8 @@ public class BStarTree
 		BStarTreeNode parent = findParent(node);
 		for (; x < parent.children.length && parent.children[x] != node;x++);
 		
+		System.out.println("Child " + parent.children[x].keys);
+		
 		if (x == parent.children.length) return false;
 	
 		if (x == 0)
@@ -227,13 +240,15 @@ public class BStarTree
 			if (parent.children[1] != null)
 				return (spacesLeftInNode(parent.children[1]) > 0);
 		}
-		else if (x == parent.children.length-1)
+		else if (x == parent.children.length-1 || parent.children[x+1] == null)
 		{
-			if (parent.children[parent.children.length-1] != null)
-				return (spacesLeftInNode(parent.children[parent.children.length-1]) > 0);
+			System.out.println((spacesLeftInNode(parent.children[x-1]) > 0));
+			if (parent.children[x-1] != null)
+				return (spacesLeftInNode(parent.children[x-1]) > 0);
 		}
 		else
 		{
+			System.out.println("Middle case");
 			if (parent.children[x-1] != null && parent.children[x+1] != null)
 				return (spacesLeftInNode(parent.children[x-1]) > 0 || spacesLeftInNode(parent.children[x+1]) > 0);
 		}
@@ -449,7 +464,8 @@ public class BStarTree
 	
 	public boolean splitNodeInsert(BStarTreeNode node, Integer element)
 	{
-		System.out.println(node.children.length % maxNodeSize);
+	
+		
 		
 		return true;
 	}
