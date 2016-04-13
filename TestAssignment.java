@@ -15,7 +15,7 @@ public class TestAssignment extends TestCase
 		
 		System.out.println("\n \tTrivial Inserts \n");
 		
-		for (int x = 0; x < 11; x++)
+		for (int x = 0; x < 20; x++)
 		{
 			assertEquals(testingTree.insertElement(new Integer(x)),true);
 			System.out.println();

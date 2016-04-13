@@ -61,6 +61,7 @@ public class BStarTree
 		return true;
 	}
 	
+	
 	public BStarTreeNode findParent(BStarTreeNode searchNode)
 	{
 		return findParent(searchNode, root);
@@ -112,9 +113,17 @@ public class BStarTree
 			numElements = maxNodeSize;
 		}
 
-		for (int i = 0; i < minimalList.length;i++)
+		int i = 0;
+		int j = 0;
+		while (j < minimalList.length && i < minimalList.length)
 		{
-			minimalList[i] = elementList[i];
+			if (elementList[i] != element)
+			{	
+				minimalList[i] = elementList[j];
+				i++;
+				
+			}
+			j++;
 		}
 
 		Arrays.sort(minimalList);
@@ -219,7 +228,7 @@ public class BStarTree
 		for (; x < parent.children.length && parent.children[x] != node;x++);
 		if (spacesLeftInNode(parent.children[x-1]) > 0)
 		{
-			node.deleteInNode(node,convertNodeToIntegers(node)[0]);
+			deleteFromNode(node,convertNodeToIntegers(node)[0]);
 			insertIntoNode(node,element);
 		}
 		return true;
