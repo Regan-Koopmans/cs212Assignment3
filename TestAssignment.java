@@ -9,43 +9,41 @@ public class TestAssignment extends TestCase
 {
 	public void testTree()
 	{
-		BStarTree testingTree = new BStarTree(5);
+		BStarTree testingTree = new BStarTree(6);
 		
 		System.out.println("///////////////////////////////////////////////////////////////////");
 		
 		System.out.println("\n \tTrivial Inserts \n");
 		
-		for (int x = 0; x < 20; x++)
+		for (int x = 0; x < 40; x++)
 		{
 			assertEquals(testingTree.insertElement(new Integer(x)),true);
 			System.out.println();
 			testingTree.breadthFirst();
 			System.out.println();
 		}
-	
 		
 		System.out.println();
 		System.out.println("///////////////////////////////////////////////////////////////////");
-		
 		System.out.println("\n \tSearches \n");
 		
-		for (int x = 0; x < 8; x++)
+		for (int x = 0; x < 45; x++)
 		{
 			System.out.println(x + " : " + testingTree.search(x));
 		}
-		
+				
 		System.out.println();
 		System.out.println("///////////////////////////////////////////////////////////////////");
 		
 		System.out.println("\n \tTrivial Deletes \n");
 		
-		for (int x = 0; x < 8; x++)
+		for (int x = 0; x < 40; x++)
 		{
-			assertEquals(testingTree.deleteElement(new Integer(x)),false);
+			System.out.println("Deleting " + x);
+			testingTree.deleteElement(new Integer(x));
 			System.out.println();
 			testingTree.breadthFirst();
 			System.out.println();
 		}
-		
 	}
 }

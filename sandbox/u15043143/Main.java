@@ -10,6 +10,7 @@ public class Main
 BStarTree testingTree = new BStarTree(6);
 		
 		System.out.println("///////////////////////////////////////////////////////////////////");
+		
 		System.out.println("\n \tTrivial Inserts \n");
 		
 		for (int x = 0; x < 40; x++)

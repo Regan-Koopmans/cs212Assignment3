@@ -346,9 +346,7 @@ public class BStarTree
 			
 			deleteFromNode(parent, temp);
 			deleteFromNode(parent.children[x+1], shiftKey);
-			
-			if (x < convertNodeToIntegers(node).length)
-				deleteFromNode(node,convertNodeToIntegers(node)[x]);
+			deleteFromNode(node,convertNodeToIntegers(node)[x]);
 			
 			insertIntoNode(parent,shiftKey);
 			insertIntoNode(node,temp);
@@ -358,9 +356,12 @@ public class BStarTree
 
 	public boolean mergeDelete(Integer element, BStarTreeNode node)
 	{
-		int splitter = (int)(Math.floor(2*(maxNodeSize+1)-1)/(double)(3));
+
+		
 		BStarTreeNode parent = findParent(node);
+		
 		int numChild = -1;
+		
 		for (int x = 0; x < parent.children.length; x++)
 		{
 			if (parent.children[x] == node )
@@ -370,7 +371,7 @@ public class BStarTree
 		if (numChild == -1) return false;
 		
 		deleteFromNode(node, element);
-		Integer [] elementList = new Integer[maxNodeSize+1];
+		Integer [] elementList = new Integer[maxNodeSize];
 		Integer [] nodeContents = convertNodeToIntegers(node);
 		
 		for (int x = 0; x < nodeContents.length; x++)
@@ -400,58 +401,33 @@ public class BStarTree
 			sibling = parent.children[numChild-1];
 		}
 		
-		
 		for (int x = nodeContents.length; x < maxNodeSize; x++)
 		{
 			elementList[x] = convertNodeToIntegers(sibling)[counter];
 			counter++;
+			//System.out.println(x);
 		}
-		Integer temp;
-		if (numChild == 0)
-			temp = convertNodeToIntegers(parent)[numChild];
-		else temp = convertNodeToIntegers(parent)[numChild-1];
-		deleteFromNode(parent, temp);
-		elementList[elementList.length -1] = temp;
-		
 		Arrays.sort(elementList);
-	
-		
-		
 		for (int x = 0; x < elementList.length; x++)
-		{
-			System.out.println(x + " : "  + elementList[x]);
-		}
-		
-		for (int x = 0; x < splitter; x++)
 		{
 			insertIntoNode(newNode, elementList[x]);
 		}
 		
-		node.keys = "";
-		for (int x = 0; x < maxNodeSize; x++)
-		{
-			node.keys += "[]";
-		}
-		for (int x = splitter+1; x < elementList.length; x++ )
-		{
-			insertIntoNode(node, elementList[x]);
-		}
-		insertIntoNode(parent, elementList[splitter]);
-		
 		if (sibling == parent.children[numChild+1])
 		{
 			parent.children[numChild] = newNode;
-//			Integer temp = convertNodeToIntegers(parent)[numChild];
-//			deleteFromNode(parent,convertNodeToIntegers(parent)[numChild]);
-//			insertIntoNode(newNode, temp);
+			Integer temp = convertNodeToIntegers(parent)[numChild];
+			deleteFromNode(parent,convertNodeToIntegers(parent)[numChild]);
+			
+			insertIntoNode(newNode, temp);
 			
 		}
 		else 
 		{
 			parent.children[numChild-1] = newNode;
-//			Integer temp = convertNodeToIntegers(parent)[numChild];
-//			deleteFromNode(parent,convertNodeToIntegers(parent)[numChild-1]);
-//			insertIntoNode(newNode, temp);
+			Integer temp = convertNodeToIntegers(parent)[numChild];
+			deleteFromNode(parent,convertNodeToIntegers(parent)[numChild-1]);
+			insertIntoNode(newNode, temp);
 		}
 		return true;
 	}
